@@ -1,0 +1,56 @@
+import numpy as np 
+upper_limit = 100 # Variable for the upper limit, 100 is not the limit.
+master_list = [x for x in range(1,upper_limit+1)]# Main search range.
+number = np.random.randint(1,upper_limit+1) 
+# Now we can set the range depending on the variable.
+
+
+def split_lists(l):
+    # Function dividing the list by 2.
+    return [l[x] for x in range(len(l)//2)], \
+    [l[x] for x in range(len(l)//2,len(l))] 
+
+
+def value_in_list(current_list):
+    # Checking the presence in one of the lists.
+    return True if number in current_list else False 
+
+
+def score_game_v3(): 
+    # The function searches in which list the value is.
+        global master_list
+        value_found = False
+        counter = 1
+        # Look in which sheet the desired value is located.
+        if number in split_lists(master_list)[0]:
+            good_list=split_lists(master_list)[0]
+        else: 
+            good_list=split_lists(master_list)[1]
+            
+        while not value_found:
+        # Determine if the length of the list is only 1 then True.
+            if len(good_list)==1:
+                value_found=True
+            else: 
+                if value_in_list(split_lists(good_list)[0]):
+                    good_list=split_lists(good_list)[0]  
+                else:
+                    good_list=split_lists(good_list)[1]
+                counter += 1 
+        return counter
+
+
+def score_game(game_core):
+    '''Run the game 1000 times to find out how quickly the game guesses the number'''
+    count_ls = []
+    global upper_limit # added the upper limit variable.
+    np.random.seed(1)  # fix RANDOM SEED, 
+    # to make our experiment reproducible!
+    random_array = np.random.randint(1,upper_limit+1, size=(1000))
+    for number in random_array:
+        count_ls.append(game_core())
+    score = int(np.mean(count_ls))
+    print(f"Your algorithm guesses the average number of {score} attempts")
+    return(score)
+
+score_game(score_game_v3)
