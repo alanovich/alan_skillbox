@@ -1,0 +1,53 @@
+import numpy as np 
+upper_limit = 100 # Переменная верхнего лимита, 100 - не предел.
+master_list = [x for x in range(1,upper_limit+1)]# Главный диапазон поиска.
+number = np.random.randint(1,upper_limit+1) 
+# Теперь можем ставить диапазон в зависимости от переменной.
+
+
+def split_lists(l):
+    return [l[x] for x in range(len(l)//2)], \
+    [l[x] for x in range(len(l)//2,len(l))] # Функция делящая список на 2.
+
+
+def value_in_list(current_list):
+    # Проверка наличия в одном из списков.
+    return True if number in current_list else False 
+
+
+def score_game_v3(): # Функиця ищет в каком списке значение.
+        global master_list
+        value_found = False
+        counter = 1
+        # Смотрим в каком листе находится искомое значение.
+        if number in split_lists(master_list)[0]:
+            good_list=split_lists(master_list)[0]
+        else: 
+            good_list=split_lists(master_list)[1]
+            
+        while not value_found:
+        # Определяем если длинна списка только 1
+            if len(good_list)==1:
+                value_found=True
+            else: 
+                if value_in_list(split_lists(good_list)[0]):
+                    good_list=split_lists(good_list)[0]  
+                else:
+                    good_list=split_lists(good_list)[1]
+                counter += 1 
+        return counter
+
+
+def score_game(game_core):
+    '''Запускаем игру 1000 раз, чтобы узнать, как быстро игра угадывает число'''
+    count_ls = []
+    global upper_limit # дополнили переменной верхнего лимита.
+    np.random.seed(1)  # фиксируем RANDOM SEED, чтобы ваш эксперимент был воспроизводим!
+    random_array = np.random.randint(1,upper_limit+1, size=(1000))
+    for number in random_array:
+        count_ls.append(game_core())
+    score = int(np.mean(count_ls))
+    print(f"Ваш алгоритм угадывает число в среднем за {score} попыток")
+    return(score)
+
+score_game(score_game_v3)
